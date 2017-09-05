@@ -9,6 +9,7 @@ import java.util.List;
  * @author bob-c
  */
 public class Tag {
+
     private String Nome;
     private List<String> atributos;
     private List<String> valores;
@@ -56,16 +57,19 @@ public class Tag {
     public String toString() {
         String att = "";
         String val = "";
-        String cont = "";
-        for(String a : getAtributos()){
-            att += "\n"+a;
+        String cont = "\nConteudo: \n";
+        for (String a : getAtributos()) {
+            att += "\n" + a;
         }
-        for(String v : getValores()){
-            val += "\n"+v;
+        for (String v : getValores()) {
+            val += "\n" + v;
         }
-        for(Tag c : getConteudo()){
-            cont += "\n"+c.toString();
+        for (Tag c : getConteudo()) {
+            cont += "\n" + c.toString();
         }
-        return "Nome: "+ getNome()+"\nNome Atributos:"+att+"\nValores:"+val+"\nConteudo:"+cont;
+        if(cont.equals("\nConteudo: \n")){
+            cont = "\nSem conteudo";
+        }
+        return "Nome: " + getNome() + "\nNome Atributos:" + att + "\nValores:" + val + cont;
     }
 }

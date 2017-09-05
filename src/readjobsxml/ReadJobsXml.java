@@ -17,15 +17,12 @@ import readjobsxml.model.Tag;
  * @author bob-c
  */
 public class ReadJobsXml {
-
-    public static String p = "";
     public static Tag xml = new Tag();
 
     public static void main(String[] args) throws MalformedURLException, DocumentException {
         SAXReader reader = new SAXReader();
         Document doc = reader.read(new File("BUO_PROD_V7.xml"));
         leitorTagRecursivo(doc.getRootElement(), xml);
-        
         System.out.println(xml.toString());
 
     }
@@ -33,12 +30,13 @@ public class ReadJobsXml {
     public static Element leitorTagRecursivo(Element e, Tag tag) {
         tag.setNome(e.getName());
 
-//        System.out.println(e.getName());
         leitorAttr(e, tag);
 
         if (e.elementIterator() != null) {
             e.elementIterator().forEachRemaining((t) -> {
-                leitorTagRecursivo(t, new Tag());
+                Tag aux = new Tag();
+                tag.getConteudo().add(aux);
+                leitorTagRecursivo(t, aux);
             });
         }
 //        salvarPDF(p);
@@ -49,9 +47,8 @@ public class ReadJobsXml {
 
         if (e.attributeIterator() != null) {
             e.attributeIterator().forEachRemaining((a) -> {
-                tag.getAtributos().add(a.getName());
-                tag.getValores().add(a.getValue());
-//                System.out.println("    " + a.getName() + ": " + a.getValue());
+                tag.getAtributos().add("    "+a.getName());
+                tag.getValores().add("    "+a.getValue());
             });
         }
     }
