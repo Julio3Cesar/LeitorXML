@@ -1,8 +1,9 @@
 package readjobsxml.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -11,32 +12,22 @@ import java.util.List;
 public class Tag {
 
     private String Nome;
-    private List<String> atributos;
-    private List<String> valores;
+    private Map<String,String> mapAttributes;
     private List<Tag> conteudo;
 
     public Tag() {
-        this.atributos = new ArrayList<>();
-        this.valores = new ArrayList<>();
+        this.mapAttributes = new HashMap<>();
         this.conteudo = new ArrayList<>();
     }
 
-    public List<String> getAtributos() {
-        return atributos;
+    public Map<String, String> getMapAttributes() {
+        return mapAttributes;
     }
 
-    public void setAtributos(List<String> atributos) {
-        this.atributos = atributos;
+    public void setMapAttributes(Map<String, String> mapAttributes) {
+        this.mapAttributes = mapAttributes;
     }
-
-    public List<String> getValores() {
-        return valores;
-    }
-
-    public void setValores(List<String> valores) {
-        this.valores = valores;
-    }
-
+    
     public String getNome() {
         return Nome;
     }
@@ -58,18 +49,16 @@ public class Tag {
         String att = "";
         String val = "";
         String cont = "\nConteudo: \n";
-        for (String a : getAtributos()) {
-            att += "\n" + a;
-        }
-        for (String v : getValores()) {
-            val += "\n" + v;
-        }
-        for (Tag c : getConteudo()) {
-            cont += "\n" + c.toString();
-        }
+        att = getMapAttributes().keySet().stream().map((a) -> "\n   " + a).reduce(att, String::concat);
+        val = getMapAttributes().values().stream().map((v) -> "\n   " + v).reduce(val, String::concat);
+        cont = getConteudo().stream().map((c) -> "\n" + c.toString()).reduce(cont, String::concat);
         if(cont.equals("\nConteudo: \n")){
             cont = "\nSem conteudo";
         }
-        return "Nome: " + getNome() + "\nNome Atributos:" + att + "\nValores:" + val + cont;
+        return "Nome: " + getNome() + "\nAtributos:" + att + "\nValores:" + val + cont;
+    }
+    
+    public List<Tag> getTagUnica(String nome){
+       return null; 
     }
 }

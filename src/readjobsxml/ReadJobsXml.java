@@ -11,6 +11,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import readjobsxml.model.Tag;
+import readjobsxml.service.HierarquiaJobService;
 
 /**
  *
@@ -18,13 +19,17 @@ import readjobsxml.model.Tag;
  */
 public class ReadJobsXml {
     public static Tag xml = new Tag();
-
+    public static HierarquiaJobService hierarquiaJobService = new HierarquiaJobService();
+            
     public static void main(String[] args) throws MalformedURLException, DocumentException {
         SAXReader reader = new SAXReader();
         Document doc = reader.read(new File("BUO_PROD_V7.xml"));
         leitorTagRecursivo(doc.getRootElement(), xml);
-        System.out.println(xml.toString());
-
+//        System.out.println(xml.toString());
+        
+//        System.out.println(hierarquiaJobService.listaHierarquia(xml).toString());
+//        System.out.println(hierarquiaJobService.semIn(xml).toString());
+        System.out.println(hierarquiaJobService.findCabeca(xml).toString());
     }
 
     public static Element leitorTagRecursivo(Element e, Tag tag) {
@@ -47,8 +52,7 @@ public class ReadJobsXml {
 
         if (e.attributeIterator() != null) {
             e.attributeIterator().forEachRemaining((a) -> {
-                tag.getAtributos().add("    "+a.getName());
-                tag.getValores().add("    "+a.getValue());
+                tag.getMapAttributes().put(a.getName(),a.getValue());
             });
         }
     }
