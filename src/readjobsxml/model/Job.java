@@ -53,21 +53,36 @@ public class Job {
 
     @Override
     public String toString() {
-        String dencias , dentes;
+        String dencias, dentes;
         if (!getDependencias().isEmpty()) {
-            dencias = getDependencias().toString();
+            for (Job d : getDependencias()) {
+                dencias = d.toString();
+            }
         } else {
             dencias = "Sem Dependencias";
         }
 
-        if (!getDependencias().isEmpty()) {
-            dentes = getDependentes().toString();
+        if (!getDependentes().isEmpty()) {
+            for (Job d : getDependentes()) {
+                dentes = d.toString();
+            }
         } else {
             dentes = "Sem Dependentes";
         }
 
-        return "\nJOB NOME: " + getNome() + "\nDEPENDENCIAS: " + dencias
-                + "\nDEPENDENTES: " + dentes;
+        return "\nJOB NOME: " + getNome() + "\nDEPENDENCIAS: "
+                + "\nDEPENDENTES: " + getDependentes().toString();
     }
 
+    public String dependentesToString(Job d) {
+        String r = "";
+        r += "  " + d.getNome();
+        for (Job s : d.getDependentes()) {
+            r += "\nDEPENDENTES: "
+                    + "\n" + dependentesToString(s);
+        }
+        r += "\n-------------------------------------------------------------\n\n";
+
+        return r;
+    }
 }
