@@ -8,6 +8,7 @@ import java.util.List;
  * @author bob-c
  */
 public class Job {
+
     private String nome;
     private Tag job;
     private List<Job> dependencias;
@@ -52,9 +53,21 @@ public class Job {
 
     @Override
     public String toString() {
-        return "\nJOB NOME: "+getNome()+"\nDEPENDENCIAS"+getDependencias().toString()+
-                "\nDEPENDENTES"+getDependentes().toString();
+        String dencias , dentes;
+        if (!getDependencias().isEmpty()) {
+            dencias = getDependencias().toString();
+        } else {
+            dencias = "Sem Dependencias";
+        }
+
+        if (!getDependencias().isEmpty()) {
+            dentes = getDependentes().toString();
+        } else {
+            dentes = "Sem Dependentes";
+        }
+
+        return "\nJOB NOME: " + getNome() + "\nDEPENDENCIAS: " + dencias
+                + "\nDEPENDENTES: " + dentes;
     }
-    
-    
+
 }

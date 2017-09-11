@@ -57,8 +57,4 @@ public class Tag {
         }
         return "Nome: " + getNome() + "\nAtributos:" + att + "\nValores:" + val + cont;
     }
-    
-    public List<Tag> getTagUnica(String nome){
-       return null; 
-    }
 }

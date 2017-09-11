@@ -30,6 +30,7 @@ public class ReadJobsXml {
 //        System.out.println(hierarquiaJobService.listaHierarquia(xml).toString());
 //        System.out.println(hierarquiaJobService.semIn(xml).toString());
         System.out.println(hierarquiaJobService.findCabeca(xml).toString());
+//            hierarquiaJobService.findCabeca(xml);
     }
 
     public static Element leitorTagRecursivo(Element e, Tag tag) {

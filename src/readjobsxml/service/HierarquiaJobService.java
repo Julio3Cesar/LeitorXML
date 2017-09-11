@@ -42,12 +42,12 @@ public class HierarquiaJobService {
                                     .replace("-", ""));
                         }
                     }
-//                    System.out.println(outcond.toString());
 //                    System.out.println("JOB NAME: " + j.getMapAttributes().get("JOBNAME") + " INCOND: " + cont + "\n");
+//                    System.out.println(outcond.toString());
                     Job cab = new Job();
                     cab.setNome(j.getMapAttributes().get("JOBNAME"));
                     cab.setJob(j);
-                    cab.setDependencias(null);
+//                    cab.setDependencias(null);
 //                    System.out.println(cab.toString());
                     cab.setDependentes(findJob(outcond, cab, table));
                     cabeca.add(cab);
@@ -68,42 +68,59 @@ public class HierarquiaJobService {
                     filho.setJob(job);
                     filho.setNome(name);
                     filho.getDependencias().add(ant);
-                    //procura proximo se tiver
-//                    System.out.println(!listName.isEmpty() && !outExterno(filho, table));
-                    if (!listName.isEmpty() && !outExterno(filho, table)) {
-                        List<String> listOutFilho = new ArrayList<>();
-                        for (Tag conteudo : filho.getJob().getConteudo()) {
-                            if (conteudo.getNome().equals("OUTCOND")) {
-                                listOutFilho.add(conteudo.getMapAttributes().get("NAME"));
+//                    System.out.println(filho.getDependencias().toString());
+                    //popula lista de outcond desse job
+                    List<String> outcond = new ArrayList<>();
+                    List<String> incond = new ArrayList<>();
+                    for (Tag t : job.getConteudo()) {
+                        if (t.getNome().equals("INCOND")) {
+                            incond.add(t.getMapAttributes().get("NAME")
+                                    .replace("1R_", "")
+                                    .replace(job.getMapAttributes().get("JOBNAME"), "")
+                                    .replace("-", ""));
+                        }
+
+                        if (t.getNome().equals("OUTCOND")) {
+                            String out = t.getMapAttributes().get("NAME")
+                                        .replace("1R_", "")
+                                        .replace(job.getMapAttributes().get("JOBNAME"), "")
+                                        .replace("-", "");
+                            if (!incond.contains(out)) {
+                                outcond.add(out);
                             }
                         }
-                        filho.setDependentes(findJob(listOutFilho, filho, table));
+                    }
+                    //procura proximo se tiver
+//                    System.out.println(!listName.isEmpty() && !outExterno(filho, table));
+                    if (!outcond.isEmpty()) {
+                        filho.setDependentes(findJob(outcond, filho, table));
+                        return dependentes;
                     } else {
                         filho.setDependentes(null);
+                        return null;
                     }
                     dependentes.add(filho);
                 }
             }
         }
-
         return dependentes;
     }
-
-    private boolean outExterno(Job filho, Tag table) {
-        for (Tag cont : filho.getJob().getConteudo()) {
-            if (cont.getNome().equals("OUTCOND")) {
-                return isOutExist(cont.getMapAttributes().get("NAME").replace(filho.getNome(), "").replace("-", ""), table);
-            }
-        }
-        return false;
-    }
-
-    private boolean isOutExist(String outName, Tag table) {
-        for (Tag job : table.getConteudo()) {
-            if (job.getMapAttributes().get("JOBNAME").equals(outName)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
+
+//    private boolean outExterno(List<String>) {
+//        for (Tag cont : filho.getJob().getConteudo()) {
+//            if (cont.getNome().equals("OUTCOND")) {
+//                return isOutExist(cont.getMapAttributes().get("NAME").replace(filho.getNome(), "").replace("-", ""), table);
+//            }
+//        }
+//        return false;
+//    }
+//    private boolean isOutExist(String outName, Tag table) {
+//        for (Tag job : table.getConteudo()) {
+//            if (job.getMapAttributes().get("JOBNAME").equals(outName)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
