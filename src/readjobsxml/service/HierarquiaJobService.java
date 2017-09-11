@@ -11,37 +11,47 @@ import readjobsxml.model.Tag;
  */
 public class HierarquiaJobService {
 
-    private final List<Job> jobs;
-    private final List<Job> cabeca;
-    private final List<Job> dependentes;
+//    private final List<Job> jobs;
+    private List<Job> cabeca;
+    private List<Job> dependentes;
 
     public HierarquiaJobService() {
-        this.jobs = new ArrayList<>();
-        this.cabeca = new ArrayList<>();
-        this.dependentes = new ArrayList<>();
+//        this.jobs = new ArrayList<>();
     }
 
     public List<Job> findCabeca(Tag xml) {
+        this.cabeca = new ArrayList<>();
         for (Tag table : xml.getConteudo()) {
             List<Tag> jobsXml = table.getConteudo();
-            List<String> outcond = new ArrayList<>();
             for (Tag j : jobsXml) {
+                this.dependentes = new ArrayList<>();
+                List<String> outcond = new ArrayList<>();
                 int cont = 0;
                 for (Tag t : j.getConteudo()) {
                     if (t.getNome().equals("INCOND")) {
                         cont -= 1;
-                    }
-                    if (t.getNome().equals("OUTCOND")) {
-                        outcond.add(t.getMapAttributes().get("NAME"));
+                        break;
                     }
                 }
                 if (cont == 0) {
+                    for (Tag t : j.getConteudo()) {
+                        if (t.getNome().equals("OUTCOND")) {
+                            outcond.add(t.getMapAttributes().get("NAME")
+                                    .replace("1R_", "")
+                                    .replace(j.getMapAttributes().get("JOBNAME"), "")
+                                    .replace("-", ""));
+                        }
+                    }
+//                    System.out.println(outcond.toString());
 //                    System.out.println("JOB NAME: " + j.getMapAttributes().get("JOBNAME") + " INCOND: " + cont + "\n");
                     Job cab = new Job();
+                    cab.setNome(j.getMapAttributes().get("JOBNAME"));
                     cab.setJob(j);
-                    cab.setNome(cab.getJob().getMapAttributes().get("JOBNAME"));
+                    cab.setDependencias(null);
+//                    System.out.println(cab.toString());
                     cab.setDependentes(findJob(outcond, cab, table));
                     cabeca.add(cab);
+//                    System.out.println(cabeca.toString());
                 }
             }
         }
@@ -49,11 +59,7 @@ public class HierarquiaJobService {
     }
 
     public List<Job> findJob(List<String> listName, Job ant, Tag table) {
-        // encontro o Job filho
-        for (int i = 0; i < listName.size(); i++) {
-            listName.set(i, listName.get(i).replace(ant.getNome(), "").replace("-", ""));
-        }
-
+        // encontro o nome do Job filho
         //populo
         for (Tag job : table.getConteudo()) {
             for (String name : listName) {
