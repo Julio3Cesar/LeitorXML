@@ -28,52 +28,61 @@ public class ExportPDFService {
                 String group = j.getJob().getMapAttributes().get("GROUP");
                 String periodo = j.getJob().getMapAttributes().get("PARENT_TABLE")
                         .replace("BUO_", "");
-                if (!result.contains("GRUPO: " + group + "\nPERIODO: "+periodo)) {
+                if (!result.contains("GRUPO: " + group + "\nPERIODO: " + periodo)) {
                     result.add("-----------------------------------------------"
                             + "------------------------------------------------"
                             + "----------------------------------");
-                    result.add("GRUPO: " + group + "\nPERIODO: "+periodo);
-                }
-
-            }
-
-            if (j.getDependencias().isEmpty()) {
-                dencias = "[SEM DEPENDENCIAS";
-            } else {
-                for (Job d : j.getDependencias()) {
-                    dencias += d.getNome() + ",";
+                    result.add("GRUPO: " + group + "\nPERIODO: " + periodo);
                 }
             }
-
-            if (j.getDependentes().isEmpty()) {
-                p += "\nO JOB DE NOME: " + j.getNome() + "\nPOSSUI AS SEGUINTES "
-                        + "ENTRADAS:\n" + dencias
-                        + "]\nE NÃO POSSUI SAIDAS\n";
+            if (j.getDependencias().isEmpty() && j.getDependentes().isEmpty()) {
+                p += "\nO JOB DE NOME: " + j.getNome() + "\nNÃO POSSUI "
+                        + "ENTRADAS E NÃO POSSUI SAIDAS\n";
                 p += "\nDESCRIÇÃO:\n" + getDescricao(j) + "\n\n";
                 result.add(p);
                 p = "";
                 dencias = "[";
                 dentes = "[";
-                return null;
+//                return null;
             } else {
-                for (Job d : j.getDependentes()) {
-                    dentes += d.getNome() + ",";
+                if (j.getDependencias().isEmpty()) {
+                    dencias = "[SEM DEPENDENCIAS";
+                } else {
+                    for (Job d : j.getDependencias()) {
+                        dencias += d.getNome() + ",";
+                    }
                 }
+
+                if (j.getDependentes().isEmpty()) {
+                    p += "\nO JOB DE NOME: " + j.getNome() + "\nPOSSUI AS SEGUINTES "
+                            + "ENTRADAS:\n" + dencias
+                            + "]\nE NÃO POSSUI SAIDAS\n";
+                    p += "\nDESCRIÇÃO:\n" + getDescricao(j) + "\n\n";
+                    result.add(p);
+                    p = "";
+                    dencias = "[";
+                    dentes = "[";
+                    return null;
+                } else {
+                    for (Job d : j.getDependentes()) {
+                        dentes += d.getNome() + ",";
+                    }
+                }
+
+                p += "\nO JOB DE NOME: " + j.getNome() + "\nPOSSUI AS SEGUINTES "
+                        + "ENTRADAS:\n" + dencias
+                        + "]\nE AS SEGUINTES SAIDAS:\n" + dentes + "]\n";
+                p += "\nDESCRIÇÃO:\n" + getDescricao(j) + "\n\n";
+
+                result.add(p);
+                p = "";
+                dencias = "[";
+                dentes = "[";
+
+                export(j.getDependentes());
+                salvarPDF(result);
             }
-
-            p += "\nO JOB DE NOME: " + j.getNome() + "\nPOSSUI AS SEGUINTES "
-                    + "ENTRADAS:\n" + dencias
-                    + "]\nE AS SEGUINTES SAIDAS:\n" + dentes + "]\n";
-            p += "\nDESCRIÇÃO:\n" + getDescricao(j) + "\n\n";
-
-            result.add(p);
-            p = "";
-            dencias = "[";
-            dentes = "[";
-
-            export(j.getDependentes());
         }
-        salvarPDF(result);
         return null;
     }
 
@@ -137,13 +146,13 @@ public class ExportPDFService {
                     }
                 } else {
                     // é um bat
-                    result += "é um executavel, com o nome \"" +j.getJob().getMapAttributes().get("MEMNAME")
-                            +"\", responsável por \""+j.getJob().getMapAttributes().get("DESCRIPTION")
-                            +"\" passando os seguintes parametros: \n";
-                    for(Tag t : j.getJob().getConteudo()){
-                        if(t.getMapAttributes().get("NAME")!= null && t.getMapAttributes().get("NAME").toUpperCase().contains("%%PARM")){
-                            result += t.getMapAttributes().get("VALUE")+"\n";
-                            
+                    result += "é um executavel, com o nome \"" + j.getJob().getMapAttributes().get("MEMNAME")
+                            + "\", responsável por \"" + j.getJob().getMapAttributes().get("DESCRIPTION")
+                            + "\" passando os seguintes parametros: \n";
+                    for (Tag t : j.getJob().getConteudo()) {
+                        if (t.getMapAttributes().get("NAME") != null && t.getMapAttributes().get("NAME").toUpperCase().contains("%%PARM")) {
+                            result += t.getMapAttributes().get("VALUE") + "\n";
+
                         }
                     }
                 }

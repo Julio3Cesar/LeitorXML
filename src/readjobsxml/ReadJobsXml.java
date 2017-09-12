@@ -33,17 +33,11 @@ public class ReadJobsXml {
         List<Job> l = hierarquiaJobService.findCabeca(xml);
         System.out.println("ok");
         ExportPDFService.export(l);
-//        for (Job a : l) {
-//            System.out.println(a.dependentesToString(a));
-//        }
-//            hierarquiaJobService.findCabeca(xml);
     }
 
     public static Element leitorTagRecursivo(Element e, Tag tag) {
         tag.setNome(e.getName());
-
         leitorAttr(e, tag);
-
         if (e.elementIterator() != null) {
             e.elementIterator().forEachRemaining((t) -> {
                 Tag aux = new Tag();
@@ -55,7 +49,6 @@ public class ReadJobsXml {
     }
 
     public static void leitorAttr(Element e, Tag tag) {
-
         if (e.attributeIterator() != null) {
             e.attributeIterator().forEachRemaining((a) -> {
                 tag.getMapAttributes().put(a.getName(), a.getValue());
