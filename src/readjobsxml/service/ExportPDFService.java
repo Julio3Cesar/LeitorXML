@@ -26,11 +26,13 @@ public class ExportPDFService {
         for (Job j : l) {
             if (j.getJob() != null) {
                 String group = j.getJob().getMapAttributes().get("GROUP");
-                if (!result.contains("GRUPO: " + group + "\n")) {
+                String periodo = j.getJob().getMapAttributes().get("PARENT_TABLE")
+                        .replace("BUO_", "");
+                if (!result.contains("GRUPO: " + group + "\nPERIODO: "+periodo)) {
                     result.add("-----------------------------------------------"
                             + "------------------------------------------------"
                             + "----------------------------------");
-                    result.add("GRUPO: " + group + "\n");
+                    result.add("GRUPO: " + group + "\nPERIODO: "+periodo);
                 }
 
             }
@@ -99,21 +101,51 @@ public class ExportPDFService {
             final String MEMNAME = j.getJob().getMapAttributes().get("MEMNAME");
             if (MEMNAME.contains("FW - ")) {
                 //é um FILE WATCH
-                result += "é um processo FiLE WATCH, responsável por verificar o arquivo ";
+                result += "é um processo FILE WATCH, responsável por verificar o arquivo ";
                 for (Tag t : j.getJob().getConteudo()) {
                     String name = t.getMapAttributes().get("NAME").toUpperCase();
-                    if(name.contains("FILE_PATH")){
-                        result +=  t.getMapAttributes().get("VALUE");
+                    if (name.contains("FILE_PATH")) {
+                        result += t.getMapAttributes().get("VALUE");
                         break;
                     }
                 }
             } else {
                 if (MEMNAME.toLowerCase().contains("transfer")) {
                     //é um transfer
-                    result += "é um FiLE TRANSFER";
+                    result += "é um FILE TRANSFER, responsável por transferirir o arquivo ";
+
+                    for (Tag t : j.getJob().getConteudo()) {
+                        String name = t.getMapAttributes().get("NAME").toUpperCase();
+                        if (name.contains("%%PARM3")) {
+                            result += t.getMapAttributes().get("VALUE") + " \ndo caminho ";
+                            break;
+                        }
+                    }
+                    for (Tag t : j.getJob().getConteudo()) {
+                        String name = t.getMapAttributes().get("NAME").toUpperCase();
+                        if (name.contains("%%PARM1")) {
+                            result += t.getMapAttributes().get("VALUE") + " \npara o caminho ";
+                            break;
+                        }
+                    }
+                    for (Tag t : j.getJob().getConteudo()) {
+                        String name = t.getMapAttributes().get("NAME").toUpperCase();
+                        if (name.contains("%%PARM2")) {
+                            result += t.getMapAttributes().get("VALUE");
+                            break;
+                        }
+                    }
                 } else {
                     // é um bat
-                    result += "é um executavel";
+                    result += "é um executavel, com o nome \"" +j.getJob().getMapAttributes().get("MEMNAME")
+                            +"\", responsável por \""+j.getJob().getMapAttributes().get("DESCRIPTION")
+                            +"\" passando os seguintes parametros: \n";
+                    for(Tag t : j.getJob().getConteudo()){
+                        if(t.getMapAttributes().get("NAME")!= null && t.getMapAttributes().get("NAME").toUpperCase().contains("%%PARM")){
+                            result += t.getMapAttributes().get("VALUE")+"\n";
+                            
+                        }
+                    }
                 }
             }
         }
