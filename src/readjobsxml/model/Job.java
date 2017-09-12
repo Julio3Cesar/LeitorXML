@@ -73,16 +73,4 @@ public class Job {
         return "\nJOB NOME: " + getNome() + "\nDEPENDENCIAS: "
                 + "\nDEPENDENTES: " + getDependentes().toString();
     }
-
-    public String dependentesToString(Job d) {
-        String r = "";
-        r += "  " + d.getNome();
-        for (Job s : d.getDependentes()) {
-            r += "\nDEPENDENTES: "
-                    + "\n" + dependentesToString(s);
-        }
-        r += "\n-------------------------------------------------------------\n\n";
-
-        return r;
-    }
 }

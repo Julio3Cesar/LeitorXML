@@ -13,6 +13,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import readjobsxml.model.Job;
 import readjobsxml.model.Tag;
+import readjobsxml.service.ExportPDFService;
 import readjobsxml.service.HierarquiaJobService;
 
 /**
@@ -28,12 +29,10 @@ public class ReadJobsXml {
         SAXReader reader = new SAXReader();
         Document doc = reader.read(new File("BUO_PROD_V7.xml"));
         leitorTagRecursivo(doc.getRootElement(), xml);
-//        System.out.println(xml.toString());
 
-//        System.out.println(hierarquiaJobService.listaHierarquia(xml).toString());
-//        System.out.println(hierarquiaJobService.semIn(xml).toString());
         List<Job> l = hierarquiaJobService.findCabeca(xml);
         System.out.println("ok");
+        ExportPDFService.export(l);
 //        for (Job a : l) {
 //            System.out.println(a.dependentesToString(a));
 //        }
@@ -52,7 +51,6 @@ public class ReadJobsXml {
                 leitorTagRecursivo(t, aux);
             });
         }
-//        salvarPDF(p);
         return null;
     }
 
@@ -63,19 +61,5 @@ public class ReadJobsXml {
                 tag.getMapAttributes().put(a.getName(), a.getValue());
             });
         }
-    }
-
-    public static void salvarPDF(String p) {
-        // criação do documento
-        com.itextpdf.text.Document document = new com.itextpdf.text.Document();
-        try {
-            PdfWriter.getInstance(document, new FileOutputStream("Malha.pdf"));
-            document.open();
-            // adicionando um parágrafo no documento
-            document.add(new Paragraph(p));
-        } catch (com.itextpdf.text.DocumentException | IOException de) {
-            System.err.println(de.getMessage());
-        }
-        document.close();
     }
 }
