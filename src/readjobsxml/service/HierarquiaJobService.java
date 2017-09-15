@@ -18,7 +18,6 @@ public class HierarquiaJobService {
         for (Tag table : xml.getConteudo()) {
             List<Tag> jobsXml = table.getConteudo();
             for (Tag j : jobsXml) {
-
                 List<String> outcond = new ArrayList<>();
                 int cont = 0;
                 for (Tag t : j.getConteudo()) {
